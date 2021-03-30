@@ -14,7 +14,6 @@ int
 main()
 {
   // create a socket using TCP IP
-  // testing
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
   // struct sockaddr_in addr;
