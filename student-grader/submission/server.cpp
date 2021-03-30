@@ -14,6 +14,7 @@ int
 main()
 {
   // create a socket using TCP IP
+  // Test server commit
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
   // allow others to reuse the address
