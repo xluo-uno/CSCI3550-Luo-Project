@@ -13,7 +13,12 @@ using namespace std;
 int
 main(int argc, char *argv[])
 {
-  
+  if (argc != 4)
+  {
+	 std::cerr<<"ERROR: ./client <HOSTNAME-OR-IP> <PORT> <FILENAME>\n"; 
+  }
+  else
+  {
   int pNum;
   char* fileName;
   char* hostName;
@@ -25,17 +30,17 @@ main(int argc, char *argv[])
   bool result = (pNum >= 1024);
   if(!result)
     {
-       std::cerr<<"ERROR:connect";
+       std::cerr<<"ERROR:Port Number\n";
        return 1;
     }
 	if (strcmp(hostName, "127.0.0.1") != 0 && strcmp(hostName, "localhost") != 0)
   {
-	  std::cerr<<"ERROR:connect";
+	  std::cerr<<"ERROR:Host Name\n";
       return 6;
   }
   if (strcmp(argv[1], "localhost") == 0)
   {
-	  hostName = "127.0.0.1";
+	  hostName = strcpy(new char[10], "127.0.0.1");
   }
 
   // create a socket using TCP IP
@@ -59,14 +64,14 @@ main(int argc, char *argv[])
 
   // connect to the server
   if (connect(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1) {
-    std::cerr<<"ERROR:connect";
+    std::cerr<<"ERROR:connect\n";
     return 2;
   }
 
   struct sockaddr_in clientAddr;
   socklen_t clientAddrLen = sizeof(clientAddr);
   if (getsockname(sockfd, (struct sockaddr *)&clientAddr, &clientAddrLen) == -1) {
-    std::cerr<<"ERROR:getsockname";
+    std::cerr<<"ERROR:getsockname\n";
     return 3;
   }
 
@@ -86,9 +91,9 @@ main(int argc, char *argv[])
   char buf[20] = {0};
   
   FILE* file = fopen((fileName), ("rb"));
-  if (file == NULL)
+  if (file == 0)
   {
-	  std::cerr<<"ERROR:file";
+	  std::cerr<<"ERROR:file read failed\n";
 	  return 7;
   }
   
@@ -104,7 +109,7 @@ main(int argc, char *argv[])
     r = fread(buf, 1, 20, file);
     if (send(sockfd, buf, r, 0) == -1) 
 	{
-      std::cerr<<"ERROR";
+      std::cerr<<"ERROR:send\n";
       return 4;
     }
     /*if (recv(sockfd, buf, 20, 0) == -1) 
@@ -121,8 +126,9 @@ main(int argc, char *argv[])
     ss.str("");
 	*/
   }
+  std::cout<<"Done\n";
   fclose(file);
   close(sockfd);
-
+  }
   return 0;
 }

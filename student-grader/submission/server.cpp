@@ -9,10 +9,17 @@
 
 #include <iostream>
 #include <sstream>
+
 using namespace std;
 int
 main(int argc,char *argv[])
 {
+  if (argc != 3)
+  {
+	 std::cerr<<"ERROR: server <PORT> <FILE-DIR>\n"; 
+  }
+  else
+  {
   int pNum;
   stringstream a(argv[1]);
   a>>pNum;
@@ -24,7 +31,7 @@ main(int argc,char *argv[])
   bool result = (pNum >= 1024);
   if(!result)
     {
-       std::cerr<<"ERROR:connect";
+       std::cerr<<"ERROR:Port Number\n";
         return 7;
     }
 	
@@ -35,7 +42,7 @@ main(int argc,char *argv[])
   // allow others to reuse the address
   int yes = 1;
   if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
-    std::cerr<<"ERROR:setsockopt";
+    std::cerr<<"ERROR:setsockopt\n";
     return 1;
   }
 
@@ -47,13 +54,13 @@ main(int argc,char *argv[])
   memset(addr.sin_zero, '\0', sizeof(addr.sin_zero));
 
   if (bind(sockfd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
-    std::cerr<<"ERROR:bind";
+    std::cerr<<"ERROR:bind\n";
     return 2;
   }
 
   // set socket to listen status
   if (listen(sockfd, 1) == -1) {
-    std::cerr<<"ERROR:listen";
+    std::cerr<<"ERROR:listen\n";
     return 3;
   }
 while(true)
@@ -64,7 +71,7 @@ while(true)
   int clientSockfd = accept(sockfd, (struct sockaddr*)&clientAddr, &clientAddrSize);
 
   if (clientSockfd == -1) {
-    std::cerr<<"ERROR:accept";
+    std::cerr<<"ERROR:accept\n";
     return 4;
   }
 
@@ -81,12 +88,13 @@ while(true)
   //std::stringstream ss;
   char fileName[100];
   
-  sprintf(fileName,"%s/%d.file",dest,count);
+  sprintf(fileName,"%s/%d.file",(dest),count);
   
   file = fopen((fileName), ("wb"));
-  if (file == NULL)
+  
+  if (file == 0)
   {
-	  std::cerr<<"ERROR:file";
+	  std::cerr<<"ERROR:create file failed\n";
 	  return 8;
   }
   int r;
@@ -121,9 +129,11 @@ while(true)
 
     //ss.str("");
   }
+  std::cout<<"Done\n";
   fclose(file);
-  close(clientSockfd); 
+  close(clientSockfd);
 }
-
+close(sockfd);
+}
   return 0;
 }
