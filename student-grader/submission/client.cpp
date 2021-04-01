@@ -55,6 +55,13 @@ main(int argc, char *argv[])
   //   perror("bind");
   //   return 1;
   // }
+  struct timeval tv;
+  tv.tv_sec = 11;
+  tv.tv_usec = 0;
+  if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) == -1) {
+    std::cerr<<"ERROR:timeout\n";
+    return 5;
+  }
 
   struct sockaddr_in serverAddr;
   serverAddr.sin_family = AF_INET;
@@ -88,7 +95,7 @@ main(int argc, char *argv[])
   //std::stringstream ss;
   */
   
-  char buf[20] = {0};
+  char buf[1024] = {0};
   
   FILE* file = fopen((fileName), ("rb"));
   if (file == 0)
@@ -106,7 +113,7 @@ main(int argc, char *argv[])
     size = ftell(file);
     fseek(file, 0, SEEK_SET);
     */
-    r = fread(buf, 1, 20, file);
+    r = fread(buf, 1, 1024, file);
     if (send(sockfd, buf, r, 0) == -1) 
 	{
       std::cerr<<"ERROR:send\n";

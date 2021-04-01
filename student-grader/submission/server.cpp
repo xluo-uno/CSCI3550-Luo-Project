@@ -20,6 +20,7 @@ main(int argc,char *argv[])
   }
   else
   {
+  char fileName[100];
   int pNum;
   stringstream a(argv[1]);
   a>>pNum;
@@ -45,6 +46,13 @@ main(int argc,char *argv[])
     std::cerr<<"ERROR:setsockopt\n";
     return 1;
   }
+  struct timeval tv;
+  tv.tv_sec = 11;
+  tv.tv_usec = 0;
+  if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) == -1) {
+    std::cerr<<"ERROR:timeout\n";
+    return 5;
+  }
 
   // bind address to socket
   struct sockaddr_in addr;
@@ -63,6 +71,8 @@ main(int argc,char *argv[])
     std::cerr<<"ERROR:listen\n";
     return 3;
   }
+  
+
 while(true)
 {
   // accept a new connection
@@ -71,7 +81,18 @@ while(true)
   int clientSockfd = accept(sockfd, (struct sockaddr*)&clientAddr, &clientAddrSize);
 
   if (clientSockfd == -1) {
-    std::cerr<<"ERROR:accept\n";
+	std::cerr<<"ERROR:accept\n";
+	if (errno == EWOULDBLOCK)
+	{
+	char buf[] = "ERROR: no file received.";
+	sprintf(fileName,"%s/%d.file",(dest),++count);
+	file = fopen((fileName), ("wb"));
+	fwrite (buf,sizeof(buf),1,file);
+	std::cout<<"Connection: Done\n";
+	fclose(file);
+	close(clientSockfd);
+	close(sockfd);
+	}
     return 4;
   }
 
@@ -84,9 +105,9 @@ while(true)
   count++;
   //bool isEnd = false;
   
-  char buf[20] = {0};
+  char buf[1024] = {0};
   //std::stringstream ss;
-  char fileName[100];
+  
   
   sprintf(fileName,"%s/%d.file",(dest),count);
   
@@ -106,7 +127,7 @@ while(true)
       return 5;
     }
 	*/
-	r = recv(clientSockfd, buf, 20, 0);
+	r = recv(clientSockfd, buf, 1024, 0);
 	if (r != 0)
 	{
 		fwrite(buf,1,r,file);
