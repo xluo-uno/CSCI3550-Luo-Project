@@ -7,7 +7,7 @@ The client application can be used to run as ./client <Hostname> <port><filename
 In the application, it includes socket, connect, write and read, and close section that can be used to connect with the server side, and send datas. 
 The Server application can be used to run as ./server <PORT> <FILE-DIR>.
 In the applicaton, it includes socket, bind, listen, accept, write and read, and then read and close. 
-The server side are used to accept the file from the client side and save it into a folder.
+The server side are used to accept the file from the client side and save it into a folder with specific name in order.
 
 The problems I ran into is that how to transfer and save the file correctly. 
 For solving the problems above, I have studied something online related to it, and also asked help from learning center.
